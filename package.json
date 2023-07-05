@@ -13,7 +13,9 @@
     "mysql": "^2.18.1"
   },
   "devDependencies": {
+    "@babel/cli": "^7.22.6",
     "@babel/core": "^7.22.6",
-    "@babel/node": "^7.22.6"
+    "@babel/node": "^7.22.6",
+    "@babel/preset-env": "^7.22.6"
   }
 }
