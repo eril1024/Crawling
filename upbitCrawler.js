@@ -1,11 +1,15 @@
 const puppeteer = require('puppeteer');
 
 const upbit_crawler = async ()  =>{
-  const browser = await puppeteer.launch({headless: "new"});
+  const browser = await puppeteer.launch(
+    {
+    headless: "new",
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
   const page = await browser.newPage();
   await page.goto('https://upbit.com/service_center/notice');
   console.log("OK");
-  
+
   const data = await page.evaluate(() => {
       const allTrElements = Array.from(document.querySelectorAll('.ty02 article tbody tr'));
       const extractedData = allTrElements.map(tr => {
@@ -19,7 +23,6 @@ const upbit_crawler = async ()  =>{
   });
    await browser.close();
    return data;
- 
 }
 
 module.exports = upbit_crawler;
