@@ -5,6 +5,7 @@ const upbit_crawler = async ()  =>{
   const page = await browser.newPage();
   await page.goto('https://upbit.com/service_center/notice');
   console.log("OK");
+  
   const data = await page.evaluate(() => {
       const allTrElements = Array.from(document.querySelectorAll('.ty02 article tbody tr'));
       const extractedData = allTrElements.map(tr => {
