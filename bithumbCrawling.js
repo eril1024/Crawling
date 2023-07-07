@@ -13,7 +13,7 @@ async function bithumbCrawling(){
 
     pool.getConnection(function(err,conn) {
         if (err) throw err;
-        var sql = "SELECT id FROM practice.announcement_crawling where exchange_name = 'Bithumb' order by id desc limit 1";
+        var sql = "SELECT id FROM announcement_crawling where exchange_name = 'Bithumb' order by id desc limit 1";
         
         conn.query(sql, function (err, result) {
             if (err) throw err;
@@ -52,7 +52,7 @@ async function bithumbCrawling(){
             for (let i = 0; i < data.length; i++) {
                 values.push([data[i].no, data[i].title, data[i].date, data[i].exchange]);
             }
-            var sql = "INSERT INTO practice.announcement_crawling (id, announce_title, reg_date,exchange_name) VALUES ? ON DUPLICATE KEY UPDATE reg_date=VALUES(reg_date)";
+            var sql = "INSERT INTO announcement_crawling (id, announce_title, reg_date,exchange_name) VALUES ? ON DUPLICATE KEY UPDATE reg_date=VALUES(reg_date)";
             
             conn.query(sql, [values], function (err, result) {
                 if (err) throw err;

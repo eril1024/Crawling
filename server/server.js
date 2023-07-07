@@ -1,11 +1,9 @@
 var express = require("express");
-var app= express();
+var app = express();
 const upbitCrawler = require("../upbitCrawler");
-const bithumb = require("../bithumbCrawling")
+const bithumb = require("../bithumbCrawling");
 
-app.get("/",function(req,res){
-    res.send("Hello Home");
-});
+
 app.get('/upbit_crawler', async (req, res) => {
     const crawling = await upbitCrawler();
     res.send(crawling);
