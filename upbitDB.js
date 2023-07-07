@@ -68,7 +68,7 @@ const upbitDB = () => {
     });
   }
 
-  return { createConnection, insertUpbitData ,selectUpbitRecentNotiId,updateUpbitNotiContents};
+  return { createConnection, insertUpbitData ,selectUpbitRecentNotiId};
 };
 
 module.exports = upbitDB();
