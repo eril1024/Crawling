@@ -2,6 +2,7 @@ const puppeteer = require('puppeteer');
 const db = require("./upbitDB");
 
 const upbitInsertQuery = "INSERT IGNORE INTO announcement_crawling (id,exchange_name,announce_title,announce_content,reg_date) VALUES(?,?,?,?,?)";
+const upbitSelectRecentId = "Select id from announcement_crawling where exchange_name='Upbit' order by id desc limit 1";
 
 const upbitCrawler = async () => {
     const conn = await db.createConnection();
@@ -25,26 +26,35 @@ const upbitCrawler = async () => {
 
         const dataList = jsonObj.data.list;
         // order by id 제일 높은거부터 조회해서 거기 까지만 추가
+        const recentNotiId = await db.selectUpbitRecentNotiId(conn, upbitSelectRecentId);
+        
+        var isLatest = false;
         for (const item of dataList){
-          console.log("item :",item);
-          await page.goto(`https://upbit.com/service_center/notice?id=${item.id}`, { waitUntil: 'networkidle2' });
-          await page.waitForTimeout(1000);
-          const notice_content = await page.$eval('#markdown_notice_body', (data) => data.textContent);
-          const id = item.id;
-          const title = item.title;
-          const exchange = "Upbit";
-          const noti_content = notice_content;
-          const reg_dttm = item.created_at;
-          var dbParam = [id,exchange,title,noti_content,reg_dttm];
-          console.log("db : ",dbParam);
-          db.insertUpbitData(conn,dbParam,upbitInsertQuery);
+          if(item.id > recentNotiId.id){
+            console.log("item :",item);
+            await page.goto(`https://upbit.com/service_center/notice?id=${item.id}`, { waitUntil: 'networkidle2' });
+            await page.waitForTimeout(1000);
+            const notice_content = await page.$eval('#markdown_notice_body', (data) => data.textContent);
+            const id = item.id;
+            const title = item.title;
+            const exchange = "Upbit";
+            const noti_content = notice_content;
+            const reg_dttm = item.created_at;
+            var dbParam = [id,exchange,title,noti_content,reg_dttm];
+            console.log("db : ",dbParam);
+            db.insertUpbitData(conn,dbParam,upbitInsertQuery);
+          }else{
+            isLatest = true;
+            break;
+          }
         };
-
+        
+        if(isLatest) break;
         currentPage++;
     } while (currentPage <= totalCount);
     conn.end();
     await browser.close();
-    return true;
+    console.log("END");
 };
 
 module.exports = upbitCrawler;

@@ -57,11 +57,15 @@ const upbitDB = () => {
     });
   }
 
-  function selectUpbitNotiId(conn,query){
+  function selectUpbitRecentNotiId(conn,query){
     return new Promise((resolve, reject) => {
       conn.query(query, (error, results, fields) => {
         if (error) reject(error);
-        resolve(results);
+        if(results.length===1){
+          resolve(results[0]);
+        }else{
+          resolve(results);
+        }
       });
     });
   }
@@ -75,7 +79,7 @@ function updateUpbitNotiContents(conn,data,query){
   });
 }
 
-  return { createConnection, insertUpbitData ,selectUpbitNotiId,updateUpbitNotiContents};
+  return { createConnection, insertUpbitData ,selectUpbitRecentNotiId,updateUpbitNotiContents};
 };
 
 module.exports = upbitDB();
