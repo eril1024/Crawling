@@ -1,6 +1,7 @@
 var express = require("express");
 var app= express();
 const upbitCrawler = require("../upbitCrawler");
+const bithumb = require("../bithumbCrawling")
 
 app.get("/",function(req,res){
     res.send("Hello Home");
