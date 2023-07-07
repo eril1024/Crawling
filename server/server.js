@@ -1,14 +1,18 @@
 var express = require("express");
-var app= express();
+var app = express();
 const upbitCrawler = require("../upbitCrawler");
+const bithumbCrawler = require("../bithumbCrawling");
 
-app.get("/",function(req,res){
-    res.send("Hello Home");
-});
-app.get('/upbit_crawler', async (req, res) => {
+
+app.get('/crawler/upbit', async (req, res) => {
     const crawling = await upbitCrawler();
     res.send(crawling);
 });
+
+app.get('/crawler/bitumb', (req, res) => {
+    bithumbCrawler.bithumb();
+    res.send('bithumb');
+  });
 
 var server = app.listen(8081,function(){
     var host = server.address().address;
