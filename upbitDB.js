@@ -1,11 +1,11 @@
 const mysql = require("mysql");
 const AWS = require('aws-sdk');
 
-AWS.config.update({
-  region: 'ap-northeast-2', // 사용하는 AWS 리전을 설정하세요
-  accessKeyId: 'AKIAS5GPPVEBG56ADRVP',
-  secretAccessKey: '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' 
-});
+// AWS.config.update({
+//   region: 'ap-northeast-2', // 사용하는 AWS 리전을 설정하세요
+//   accessKeyId: 'AKIAS5GPPVEBG56ADRVP',
+//   secretAccessKey: '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' 
+// });
 // ec2올리면 주석 필요  
 
 
