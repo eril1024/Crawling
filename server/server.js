@@ -10,6 +10,11 @@ app.get('/upbit_crawler', async (req, res) => {
     res.send(crawling);
 });
 
+app.get('/bithumb', (req, res) => {
+    bithumb.bithumb();
+    res.send('bithumb');
+  });
+
 var server = app.listen(8081,function(){
     var host = server.address().address;
     var port = server.address().port;
