@@ -44,6 +44,7 @@ const upbitCrawler = async () => {
             console.log("db : ",dbParam);
             db.insertUpbitData(conn,dbParam,upbitInsertQuery);
           }else{
+            console.log("최신화 완료");
             isLatest = true;
             break;
           }

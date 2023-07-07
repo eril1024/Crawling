@@ -4,7 +4,7 @@ const AWS = require('aws-sdk');
 AWS.config.update({
   region: 'ap-northeast-2', // AWS 리전을 설정
 });
-// ec2올리면 주석 필요 ec2 iam 권한 부여필요  
+// ec2올리면 주석 필요 
 
 
 const ssm = new AWS.SSM();
