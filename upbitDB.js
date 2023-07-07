@@ -1,12 +1,10 @@
 const mysql = require("mysql");
 const AWS = require('aws-sdk');
 
-// AWS.config.update({
-//   region: 'ap-northeast-2', // 사용하는 AWS 리전을 설정하세요
-//   accessKeyId: 'AKIAS5GPPVEBG56ADRVP',
-//   secretAccessKey: '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' 
-// });
-// ec2올리면 주석 필요  
+AWS.config.update({
+  region: 'ap-northeast-2', // AWS 리전을 설정
+});
+// ec2올리면 주석 필요 ec2 iam 권한 부여필요  
 
 
 const ssm = new AWS.SSM();
@@ -69,15 +67,6 @@ const upbitDB = () => {
       });
     });
   }
-
-function updateUpbitNotiContents(conn,data,query){
-  return new Promise((resolve, reject) => {
-    conn.query(query, data, (error, results, fields) => {
-      if (error) reject(error);
-      resolve(results);
-    });
-  });
-}
 
   return { createConnection, insertUpbitData ,selectUpbitRecentNotiId,updateUpbitNotiContents};
 };
