@@ -30,8 +30,8 @@ async function bithumbCrawling(){
     let data = [];
     let index = 0;
     while (true) {
-        await page.goto('https://cafe.bithumb.com/view/boards/43?pageNumber=' + index);
-
+        await page.goto('https://cafe.bithumb.com/view/boards/43?pageNumber=' + index, { waitUntil: 'load' });
+        
         let pageData = await getAll(page, lastId);
         
         if(!pageData){
@@ -50,9 +50,9 @@ async function bithumbCrawling(){
             let values = [];
             
             for (let i = 0; i < data.length; i++) {
-                values.push([data[i].no, data[i].title, data[i].date, data[i].exchange]);
+                values.push([data[i].no, data[i].title, data[i].date, data[i].exchange, data[i].content]);
             }
-            var sql = "INSERT INTO announcement_crawling (id, announce_title, reg_date,exchange_name) VALUES ? ON DUPLICATE KEY UPDATE reg_date=VALUES(reg_date)";
+            var sql = "INSERT INTO announcement_crawling (id, announce_title, reg_date,exchange_name, announce_content) VALUES ? ON DUPLICATE KEY UPDATE reg_date=VALUES(reg_date)";
             
             conn.query(sql, [values], function (err, result) {
                 if (err) throw err;
@@ -72,10 +72,11 @@ async function getAll(page, lastId){
     for(let index = 11; index < number + 1; index++){
         let one = {};
         
-        body("#dataTables > tbody > tr:nth-child(" + index + ")").each(function(key, val) {
+        body("#dataTables > tbody > tr:nth-child(" + index + ")").each(async function(key, val) {
             one.no = body(val).find("td.invisible-mobile.small-size").text();
-            one.title = body(val).find("td.one-line > a").text(); 
-            one.date = body(val).find("td:nth-child(3)").text(); 
+            one.title = body(val).find("td.one-line > a").text();
+            one.date = body(val).find("td:nth-child(3)").text();
+            one.content = body(val).find("td.one-line > a").attr("onclick").substring(22,29);
             one.exchange = "Bithumb";
           });
         data.push(one);
@@ -84,8 +85,18 @@ async function getAll(page, lastId){
     if(data.length == 0 || data[0].no <= lastId){
         return;
     }
-
+    await getContent(page, data);
     return Promise.resolve(data);
+}
+
+async function getContent(page, data){
+    for(let index = 0; index < data.length; index++){
+        await page.goto('https://cafe.bithumb.com/view/board-contents/' + data[index].content, { waitUntil: 'load' });
+        const content = await page.content();
+        const body = $.load(content);
+        let text = body("#content > div.board-content-wrapper.row.no-gutters > div.board-content.col-12").text();
+        data[index].content = text;
+    }
 }
 
 module.exports.bithumb = bithumbCrawling;
