@@ -35,7 +35,7 @@ async function bithumbCrawling(){
         let pageData = await getAll(page, lastId);
         
         if(!pageData){
-            console.log("break");
+            console.log("크롤링 데이터 가져오기 종료");
             break;
         }
 
@@ -76,27 +76,22 @@ async function getAll(page, lastId){
             one.no = body(val).find("td.invisible-mobile.small-size").text();
             one.title = body(val).find("td.one-line > a").text();
             one.date = body(val).find("td:nth-child(3)").text();
-            one.content = body(val).find("td.one-line > a").attr("onclick").substring(22,29);
             one.exchange = "Bithumb";
           });
+
+          await page.click("#dataTables > tbody > tr:nth-child("+ index +") > td.one-line > a");
+          await page.waitForSelector("#content > div.board-content-wrapper.row.no-gutters > div.board-content.col-12");
+          one.content = await page.$eval("#content > div.board-content-wrapper.row.no-gutters > div.board-content.col-12", (data) => data.textContent);
+          await page.goBack();
+          
         data.push(one);
     }
     
     if(data.length == 0 || data[0].no <= lastId){
         return;
     }
-    await getContent(page, data);
+    
     return Promise.resolve(data);
-}
-
-async function getContent(page, data){
-    for(let index = 0; index < data.length; index++){
-        await page.goto('https://cafe.bithumb.com/view/board-contents/' + data[index].content, { waitUntil: 'load' });
-        const content = await page.content();
-        const body = $.load(content);
-        let text = body("#content > div.board-content-wrapper.row.no-gutters > div.board-content.col-12").text();
-        data[index].content = text;
-    }
 }
 
 module.exports.bithumb = bithumbCrawling;
